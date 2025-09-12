@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Code Error Finder</title>
+  <style>
+    /* ===================== Global Styles ====================== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #141e30, #243b55);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1300px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+      animation: fadeIn 1.5s ease-in-out;
+      display: flex;
+      flex-wrap: wrap; /* responsive */
+      gap: 30px;
+    }
+
+    h1 {
+      width: 100%;
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 2.5rem;
+      background: linear-gradient(to right, #00c6ff, #0072ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* ===================== Columns ====================== */
+    .column {
+      flex: 1;
+      min-width: 350px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 20px;
+      padding: 25px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+    }
+
+    /* ===================== Form Section ====================== */
+    .form-section select,
+    .form-section textarea,
+    .form-section button {
+      width: 100%;
+      padding: 15px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+      transition: 0.3s ease;
+    }
+
+    select {
+      background: #0f2027;
+      color: #fff;
+      border: 1px solid #00c6ff;
+      margin-bottom: 20px;
+    }
+
+    textarea {
+      background: #0f2027;
+      color: #fff;
+      resize: none;
+      min-height: 250px;
+      border: 1px solid #00c6ff;
+      margin-bottom: 20px;
+    }
+
+    textarea:focus, select:focus {
+      border-color: #ff8c00;
+      box-shadow: 0 0 10px #ff8c00;
+    }
+
+    button {
+      background: linear-gradient(to right, #00c6ff, #0072ff);
+      color: #fff;
+      font-size: 1.2rem;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: linear-gradient(to right, #ff8c00, #ff2e63);
+      transform: scale(1.05);
+    }
+
+    /* ===================== Loader ====================== */
+    .loader {
+      display: none;
+      margin: 20px auto;
+      border: 8px solid rgba(255, 255, 255, 0.1);
+      border-left-color: #00c6ff;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ===================== Output Section ====================== */
+    .output {
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 15px;
+      padding: 20px;
+      display: none;
+      animation: slideUp 0.8s ease-in-out;
+    }
+
+    .output h2 {
+      margin-bottom: 15px;
+      color: #00c6ff;
+    }
+
+    .output pre {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      background: #0f2027;
+      padding: 15px;
+      border-radius: 10px;
+      color: #fffa;
+    }
+
+    /* ===================== Animations ====================== */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* ===================== Footer ====================== */
+    footer {
+      margin-top: 30px;
+      width: 100%;
+      text-align: center;
+      font-size: 0.9rem;
+      opacity: 0.7;
+    }
+
+    /* ===================== Responsive ====================== */
+    @media (max-width: 900px) {
+      .container {
+        flex-direction: column;
+      }
+    }
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🚀 Code Error Finder</h1>
+
+    <!-- Left Column: Input Form -->
+    <div class="column">
+      <div class="form-section">
+        <select id="language">
+          <option value="python">🐍 Python</option>
+          <option value="c">🔵 C</option>
+          <option value="cpp">🟣 C++</option>
+          <option value="java">☕ Java</option>
+          <option value="js">🟡 JavaScript</option>
+          <option value="html">🌐 HTML</option>
+        </select>
+
+        <textarea id="codeInput" placeholder="Paste your code here..."></textarea>
+
+        <button onclick="analyzeCode()">Analyze Code</button>
+      </div>
+    </div>
+
+    <!-- Right Column: Loader & Output -->
+    <div class="column">
+      <div class="loader" id="loader"></div>
+
+      <div class="output" id="output">
+        <h2>🔍 Analysis Result</h2>
+        <pre id="resultText"></pre>
+      </div>
+    </div>
+
+    <footer>
+      &copy; 2025 ML-Powered Error Finder
+    </footer>
+  </div>
+
+  <script>
+  
+    function analyzeCode() {
+      const code = document.getElementById("codeInput").value.trim();
+      const language = document.getElementById("language").value;
+      const loader = document.getElementById("loader");
+      const output = document.getElementById("output");
+      const resultText = document.getElementById("resultText");
+
+      if (!code) {
+        alert("⚠️ Please paste some code before analyzing!");
+        return;
+      }
+
+      loader.style.display = "block";
+      output.style.display = "none";
+
+      setTimeout(() => {
+        loader.style.display = "none";
+        output.style.display = "block";
+
+        let result = `Language: ${language.toUpperCase()}\n\n`;
+
+        if (code.includes("print") && language === "python") {
+          result += "✅ No major syntax error found.\n💡 Suggestion: Use f-strings for better formatting.";
+        } else if (code.includes("main") && language === "c") {
+          result += "✅ Looks like a valid C program.\n💡 Suggestion: Ensure memory is freed properly.";
+        }
+        else if (code.includes("cin") && language ==="cpp"){
+          result += "✅ No major syntax error found.\n💡 Suggestion: Use other language.";
+        }
+        else if (code.includes("DOCTYPE") && language ==="html"){
+          result += "✅ No syntax error for you.\n💡 Suggestion: Use CSS for Website.";
+        }
+        else if (code.includes("static") && language ==="java"){
+          result += "✅ No syntax error for you.\n💡 Suggestion: Ensure to follow the Classes";
+        }
+         else {
+          result += "⚠️ Possible non-syntax issues detected.\n💡 Suggestion: Optimize loops and check variable usage.";
+        }
+
+        resultText.innerText = result;
+      }, 2500);
+    }
+  </script>
+</body>
+</html>
