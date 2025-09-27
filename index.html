@@ -22,16 +22,17 @@
       padding: 20px;
     }
 
+    /* ===================== Container ====================== */
     .container {
       width: 100%;
       max-width: 1300px;
       background: rgba(255, 255, 255, 0.05);
       border-radius: 20px;
       padding: 40px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
       animation: fadeIn 1.5s ease-in-out;
       display: flex;
-      flex-wrap: wrap; /* responsive */
+      flex-wrap: wrap;
       gap: 30px;
     }
 
@@ -49,13 +50,13 @@
     .column {
       flex: 1;
       min-width: 350px;
-      background: rgba(255,255,255,0.05);
+      background: rgba(255, 255, 255, 0.05);
       border-radius: 20px;
       padding: 25px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
     }
 
-    /* ===================== Form Section ====================== */
+    /* ===================== Form Elements ====================== */
     .form-section select,
     .form-section textarea,
     .form-section button {
@@ -84,7 +85,8 @@
       margin-bottom: 20px;
     }
 
-    textarea:focus, select:focus {
+    textarea:focus,
+    select:focus {
       border-color: #ff8c00;
       box-shadow: 0 0 10px #ff8c00;
     }
@@ -117,7 +119,9 @@
     }
 
     @keyframes spin {
-      to { transform: rotate(360deg); }
+      to {
+        transform: rotate(360deg);
+      }
     }
 
     /* ===================== Output Section ====================== */
@@ -145,13 +149,25 @@
 
     /* ===================== Animations ====================== */
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     @keyframes slideUp {
-      from { transform: translateY(50px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
+      from {
+        transform: translateY(50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
     }
 
     /* ===================== Footer ====================== */
@@ -169,14 +185,15 @@
         flex-direction: column;
       }
     }
-
   </style>
 </head>
 <body>
+
   <div class="container">
+    <!-- Title -->
     <h1>🚀 Code Error Finder</h1>
 
-    <!-- Left Column: Input Form -->
+    <!-- Left Column: Form -->
     <div class="column">
       <div class="form-section">
         <select id="language">
@@ -189,7 +206,6 @@
         </select>
 
         <textarea id="codeInput" placeholder="Paste your code here..."></textarea>
-
         <button onclick="analyzeCode()">Analyze Code</button>
       </div>
     </div>
@@ -197,21 +213,21 @@
     <!-- Right Column: Loader & Output -->
     <div class="column">
       <div class="loader" id="loader"></div>
-
       <div class="output" id="output">
         <h2>🔍 Analysis Result</h2>
         <pre id="resultText"></pre>
       </div>
     </div>
 
-    <footer>
-      &copy; 2025 ML-Powered Error Finder
-    </footer>
+    <!-- Footer -->
+    <footer>&copy; 2025 ML-Powered Error Finder</footer>
   </div>
 
+  <!-- ===================== Script ====================== -->
   <script>
-  
-    function analyzeCode() {
+    const API_URL = "https://a13b3330-45c0-4578-a5b0-1d97d98b4159-00-3frzjws2yni3j.spock.replit.dev/analyze";
+
+    async function analyzeCode() {
       const code = document.getElementById("codeInput").value.trim();
       const language = document.getElementById("language").value;
       const loader = document.getElementById("loader");
@@ -226,32 +242,42 @@
       loader.style.display = "block";
       output.style.display = "none";
 
-      setTimeout(() => {
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code, language })
+        });
+
+        const result = await response.json();
         loader.style.display = "none";
         output.style.display = "block";
 
-        let result = `Language: ${language.toUpperCase()}\n\n`;
+        let displayText = `Language: ${language.toUpperCase()}\n\n`;
+        displayText += result.message + "\n\n";
 
-        if (code.includes("print") && language === "python") {
-          result += "✅ No major syntax error found.\n💡 Suggestion: Use f-strings for better formatting.";
-        } else if (code.includes("main") && language === "c") {
-          result += "✅ Looks like a valid C program.\n💡 Suggestion: Ensure memory is freed properly.";
-        }
-        else if (code.includes("cin") && language ==="cpp"){
-          result += "✅ No major syntax error found.\n💡 Suggestion: Use other language.";
-        }
-        else if (code.includes("DOCTYPE") && language ==="html"){
-          result += "✅ No syntax error for you.\n💡 Suggestion: Use CSS for Website.";
-        }
-        else if (code.includes("static") && language ==="java"){
-          result += "✅ No syntax error for you.\n💡 Suggestion: Ensure to follow the Classes";
-        }
-         else {
-          result += "⚠️ Possible non-syntax issues detected.\n💡 Suggestion: Optimize loops and check variable usage.";
+        if (result.errors && result.errors.length > 0) {
+          displayText += "🔍 Errors Found:\n";
+          result.errors.forEach((error, i) => {
+            displayText += `${i + 1}. [${error.type}] ${error.message}\n`;
+          });
+          displayText += "\n";
         }
 
-        resultText.innerText = result;
-      }, 2500);
+        if (result.suggestions && result.suggestions.length > 0) {
+          displayText += "💡 Suggestions:\n";
+          result.suggestions.forEach((sug, i) => {
+            displayText += `${i + 1}. ${sug}\n`;
+          });
+        }
+
+        resultText.innerText = displayText;
+
+      } catch (err) {
+        loader.style.display = "none";
+        output.style.display = "block";
+        resultText.innerText = `❌ Error connecting to server: ${err.message}\n💡 Please check your connection or CORS settings.`;
+      }
     }
   </script>
 </body>
