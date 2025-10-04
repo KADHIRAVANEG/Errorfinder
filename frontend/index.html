@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Code Error Finder</title>
-  
-  <!-- Prism.js for Syntax Highlighting -->
+  <title>🚀 Code Error Finder</title>
+
+  <!-- ================= Prism.js for Syntax Highlighting ================= -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/themes/prism-tomorrow.min.css" rel="stylesheet"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/prism.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/components/prism-python.min.js"></script>
@@ -14,54 +14,196 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/components/prism-javascript.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/components/prism-markup.min.js"></script>
 
+  <!-- ===================== CSS Styling ===================== -->
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
-    body { background: linear-gradient(135deg, #141e30, #243b55); color: #fff; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
-    .container { width: 100%; max-width: 1300px; background: rgba(255, 255, 255, 0.05); border-radius: 20px; padding: 40px; box-shadow: 0 8px 25px rgba(0,0,0,0.3); animation: fadeIn 1.5s ease-in-out; display: flex; flex-wrap: wrap; gap: 30px; }
-    h1 { width: 100%; text-align: center; margin-bottom: 30px; font-size: 2.5rem; background: linear-gradient(to right, #00c6ff, #0072ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .column { flex: 1; min-width: 350px; background: rgba(255,255,255,0.05); border-radius: 20px; padding: 25px; box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
-    .form-section select, .form-section textarea, .form-section button { width: 100%; padding: 15px; border-radius: 10px; border: none; outline: none; font-size: 1rem; transition: 0.3s ease; }
-    select { background: #0f2027; color: #fff; border: 1px solid #00c6ff; margin-bottom: 20px; }
-    textarea { background: #0f2027; color: #fff; resize: none; min-height: 250px; border: 1px solid #00c6ff; margin-bottom: 20px; }
-    textarea:focus, select:focus { border-color: #ff8c00; box-shadow: 0 0 10px #ff8c00; }
-    button { background: linear-gradient(to right, #00c6ff, #0072ff); color: #fff; font-size: 1.2rem; font-weight: bold; cursor: pointer; border: none; transition: 0.3s; }
-    button:hover { background: linear-gradient(to right, #ff8c00, #ff2e63); transform: scale(1.05); }
-    .loader { display: none; margin: 20px auto; border: 8px solid rgba(255, 255, 255, 0.1); border-left-color: #00c6ff; border-radius: 50%; width: 60px; height: 60px; animation: spin 1s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .output { background: rgba(255, 255, 255, 0.08); border-radius: 15px; padding: 20px; display: none; animation: slideUp 0.8s ease-in-out; }
-    .output h2 { margin-bottom: 15px; color: #00c6ff; }
-    pre { white-space: pre-wrap; word-wrap: break-word; background: #0f2027; padding: 15px; border-radius: 10px; color: #fffa; overflow-x: auto; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1); } 
-    footer { margin-top: 30px; width: 100%; text-align: center; font-size: 0.9rem; opacity: 0.7; }
-    @media (max-width: 900px) { .container { flex-direction: column; } }
+    /* ===================== Global Styles ===================== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #141e30, #243b55);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    /* ===================== Main Container ===================== */
+    .container {
+      width: 100%;
+      max-width: 1300px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      padding: 50px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 40px;
+      animation: fadeIn 1.5s ease-in-out;
+    }
+
+    h1 {
+      width: 100%;
+      text-align: center;
+      margin-bottom: 40px;
+      font-size: 2.8rem;
+      background: linear-gradient(to right, #00c6ff, #0072ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* ===================== Columns ===================== */
+    .column {
+      flex: 1;
+      min-width: 350px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+    }
+
+    /* ===================== Form Elements ===================== */
+    select, textarea, button {
+      width: 100%;
+      padding: 18px;
+      border-radius: 12px;
+      border: none;
+      outline: none;
+      font-size: 1.05rem;
+      transition: 0.3s ease;
+      margin-bottom: 20px;
+    }
+
+    select {
+      background: #0f2027;
+      color: #fff;
+      border: 2px solid #00c6ff;
+    }
+
+    textarea {
+      background: #0f2027;
+      color: #fff;
+      resize: none;
+      min-height: 300px;
+      border: 2px solid #00c6ff;
+    }
+
+    textarea:focus, select:focus {
+      border-color: #ff8c00;
+      box-shadow: 0 0 12px #ff8c00;
+    }
+
+    button {
+      background: linear-gradient(to right, #00c6ff, #0072ff);
+      color: #fff;
+      font-size: 1.25rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: linear-gradient(to right, #ff8c00, #ff2e63);
+      transform: scale(1.05);
+    }
+
+    /* ===================== Loader ===================== */
+    .loader {
+      display: none;
+      margin: 20px auto;
+      border: 10px solid rgba(255,255,255,0.1);
+      border-left-color: #00c6ff;
+      border-radius: 50%;
+      width: 70px;
+      height: 70px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ===================== Output Section ===================== */
+    .output {
+      background: rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 25px;
+      display: none;
+      animation: slideUp 0.8s ease-in-out;
+    }
+
+    .output h2 {
+      margin-bottom: 20px;
+      color: #00c6ff;
+    }
+
+    pre {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      background: #0f2027;
+      padding: 20px;
+      border-radius: 12px;
+      color: #fffa;
+      overflow-x: auto;
+    }
+
+    /* ===================== Animations ===================== */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    footer {
+      margin-top: 40px;
+      width: 100%;
+      text-align: center;
+      font-size: 1rem;
+      opacity: 0.8;
+    }
+
+    @media (max-width: 900px) {
+      .container { flex-direction: column; }
+    }
   </style>
 </head>
+
 <body>
   <div class="container">
     <h1>🚀 Code Error Finder</h1>
 
-    <!-- Left Column: Input Form -->
+    <!-- ===================== Left Column: Input Form ===================== -->
     <div class="column">
-      <div class="form-section">
-        <select id="language">
-          <option value="python">🐍 Python</option>
-          <option value="c">🔵 C</option>
-          <option value="cpp">🟣 C++</option>
-          <option value="java">☕ Java</option>
-          <option value="js">🟡 JavaScript</option>
-          <option value="html">🌐 HTML</option>
-        </select>
+      <label for="language"><strong>Select Language:</strong></label>
+      <select id="language">
+        <option value="python">🐍 Python</option>
+        <option value="c">🔵 C</option>
+        <option value="cpp">🟣 C++</option>
+        <option value="java">☕ Java</option>
+        <option value="js">🟡 JavaScript</option>
+        <option value="html">🌐 HTML</option>
+      </select>
 
-        <textarea id="codeInput" placeholder="Paste your code here..."></textarea>
+      <label for="codeInput"><strong>Paste Your Code:</strong></label>
+      <textarea id="codeInput" placeholder="Paste your code here..."></textarea>
 
-        <button onclick="analyzeCode()">Analyze Code</button>
-      </div>
+      <button onclick="analyzeCode()">Analyze Code</button>
     </div>
 
-    <!-- Right Column: Loader & Output -->
+    <!-- ===================== Right Column: Loader & Output ===================== -->
     <div class="column">
       <div class="loader" id="loader"></div>
+
       <div class="output" id="output">
         <h2>🔍 Analysis Result</h2>
         <pre id="resultText" class="language-python"><code></code></pre>
@@ -71,7 +213,10 @@
     <footer>&copy; 2025 ML-Powered Error Finder</footer>
   </div>
 
+  <!-- ===================== JavaScript: Connect to Render Backend ===================== -->
   <script>
+    const BACKEND_URL = 'https://errorfinder2.onrender.com'; // Your Render backend URL
+
     async function analyzeCode() {
       const code = document.getElementById("codeInput").value.trim();
       const language = document.getElementById("language").value;
@@ -79,36 +224,51 @@
       const output = document.getElementById("output");
       const codeElement = document.querySelector("#resultText code");
 
-      if (!code) { alert("⚠️ Please paste some code before analyzing!"); return; }
+      // Alert if code is empty
+      if (!code) {
+        alert("⚠️ Please paste some code before analyzing!");
+        return;
+      }
 
+      // Show loader and hide previous output
       loader.style.display = "block";
       output.style.display = "none";
 
       try {
-        const response = await fetch('/analyze', {
+        // Send code to backend for analysis
+        const response = await fetch(`${BACKEND_URL}/analyze`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ code, language })
         });
 
         const result = await response.json();
+
+        // Hide loader and show output
         loader.style.display = "none";
         output.style.display = "block";
 
         let displayText = `Language: ${language.toUpperCase()}\n\n`;
         displayText += result.message + "\n\n";
 
-        if (result.errors && result.errors.length > 0) {
+        // Display errors
+        if (result.errors && result.errors.length) {
           displayText += "🔍 Errors Found:\n";
-          result.errors.forEach((err, i) => { displayText += `${i + 1}. [${err.type}] ${err.message}\n`; });
+          result.errors.forEach((err, i) => {
+            displayText += `${i+1}. [${err.type}] ${err.message}\n`;
+          });
           displayText += "\n";
         }
 
-        if (result.suggestions && result.suggestions.length > 0) {
+        // Display suggestions
+        if (result.suggestions && result.suggestions.length) {
           displayText += "💡 Suggestions:\n";
-          result.suggestions.forEach((s, i) => { displayText += `${i + 1}. ${s}\n`; });
+          result.suggestions.forEach((s,i) => {
+            displayText += `${i+1}. ${s}\n`;
+          });
         }
 
+        // Highlight code
         codeElement.className = `language-${language}`;
         codeElement.textContent = displayText;
         Prism.highlightElement(codeElement);
@@ -117,7 +277,7 @@
         loader.style.display = "none";
         output.style.display = "block";
         codeElement.className = "language-none";
-        codeElement.textContent = `❌ Error connecting to server: ${err.message}`;
+        codeElement.textContent = `❌ Error connecting to backend: ${err.message}`;
         Prism.highlightElement(codeElement);
       }
     }
