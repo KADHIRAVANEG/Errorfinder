@@ -277,7 +277,7 @@
         loader.style.display = "none";
         output.style.display = "block";
         codeElement.className = "language-none";
-        codeElement.textContent = `❌ Error connecting to backend: ${err.message}`;
+        codeElement.textContent = `❌ Error connecting to the backend: ${err.message}`;
         Prism.highlightElement(codeElement);
       }
     }
