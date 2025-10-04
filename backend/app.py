@@ -18,26 +18,79 @@ class CodeAnalyzer:
 
     def __init__(self):
         self.language_configs = {
-            'python': {
-                'extension': '.py',
-                'command': ['python3', '-m', 'py_compile'],
-                'error_patterns': [
-                    (r'SyntaxError:', 'Syntax Error'),
-                    (r'IndentationError:', 'Indentation Error'),
-                    (r'NameError:', 'Name Error'),
-                    (r'TypeError:', 'Type Error'),
-                    (r'ValueError:', 'Value Error'),
-                    (r'RuntimeError:', 'Runtime Error')
-                ],
-                'suggestions': [
-                    '💡 Use f-strings for formatting strings',
-                    '💡 Follow PEP8 style guide',
-                    '💡 Add type hints for readability',
-                    '💡 Avoid global variables when possible',
-                    '💡 Catch exceptions with try-except',
-                    '💡 Modularize code into functions/classes'
-                ]
-            },
+           'python': {
+    'extension': '.py',
+    'command'python': {
+    'extension': '.py',
+    'command': ['python3', '-m', 'py_compile'],
+    'error_patterns': [
+        (r'SyntaxError:', 'Syntax Error'),
+        (r'IndentationError:', 'Indentation Error'),
+        (r'NameError:', 'Name Error'),
+        (r'TypeError:', 'Type Error'),
+        (r'ValueError:', 'Value Error'),
+        (r'RuntimeError:', 'Runtime Error')
+    ],
+    'suggestions': [
+        '💡 Use f-strings for formatting strings',
+        '💡 Follow PEP8 style guide',
+        '💡 Add type hints for readability',
+        '💡 Avoid global variables when possible',
+        '💡 Catch exceptions with try-except',
+        '💡 Modularize code into functions/classes'
+    ],
+    # -------------------- Pre-check for non-Python code --------------------
+    'pre_check': lambda code: {
+        'status': 'error',
+        'message': '❌ This does not look like Python code',
+        'suggestions': ['Check that you selected the correct language']
+    } if re.search(
+        r'\bSystem\.out\.println\b|'        # Java
+        r'\bpublic\s+class\b|'              # Java
+        r'\bint\s+\w+\s*=\b|'               # C/C++/Java
+        r'#include\s*<.*?>|'                # C/C++
+        r'\bconsole\.log\b|'                # JavaScript
+        r'<\s*html\b|'                      # HTML
+        r'<\?php|'                           # PHP
+        r'\bfunc\s+\w+\('                    # Go
+        , code
+    ) else None
+},
+': ['python3', '-m', 'py_compile'],
+    'error_patterns': [
+        (r'SyntaxError:', 'Syntax Error'),
+        (r'IndentationError:', 'Indentation Error'),
+        (r'NameError:', 'Name Error'),
+        (r'TypeError:', 'Type Error'),
+        (r'ValueError:', 'Value Error'),
+        (r'RuntimeError:', 'Runtime Error')
+    ],
+    'suggestions': [
+        '💡 Use f-strings for formatting strings',
+        '💡 Follow PEP8 style guide',
+        '💡 Add type hints for readability',
+        '💡 Avoid global variables when possible',
+        '💡 Catch exceptions with try-except',
+        '💡 Modularize code into functions/classes'
+    ],
+    # -------------------- Pre-check for non-Python code --------------------
+    'pre_check': lambda code: {
+        'status': 'error',
+        'message': '❌ This does not look like Python code',
+        'suggestions': ['Check that you selected the correct language']
+    } if re.search(
+        r'\bSystem\.out\.println\b|'        # Java
+        r'\bpublic\s+class\b|'              # Java
+        r'\bint\s+\w+\s*=\b|'               # C/C++/Java
+        r'#include\s*<.*?>|'                # C/C++
+        r'\bconsole\.log\b|'                # JavaScript
+        r'<\s*html\b|'                      # HTML
+        r'<\?php|'                           # PHP
+        r'\bfunc\s+\w+\('                    # Go
+        , code
+    ) else None
+},
+
             'c': {
                 'extension': '.c',
                 'command': ['gcc', '-fsyntax-only'],
