@@ -21,7 +21,7 @@ def ensure_jdk():
     else:
         print("✅ JDK already installed.")
 
-
+ensure_jdk()
 # --------------------------- App Setup ---------------------------
 app = Flask(__name__)
 CORS(app, origins=["*"], supports_credentials=False)
