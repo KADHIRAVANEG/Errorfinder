@@ -5,14 +5,22 @@ import subprocess, tempfile, os, re, shutil, logging
 from bs4 import BeautifulSoup
 
 # --------------------------- JDK Installer ---------------------------
+import threading
+
+def install_jdk_background():
+    """Install JDK in background thread to avoid blocking Render startup."""
+    print("⚙️ Installing OpenJDK 17 in background...")
+    os.system("apt-get update -y && apt-get install -y openjdk-17-jdk")
+    print("✅ JDK installation complete (background).")
+
 def ensure_jdk():
-    """Install JDK automatically if missing (for Render free plan)."""
+    """Ensure JDK is installed; start background install if missing."""
     if shutil.which('javac') is None:
-        print("⚙️ JDK not found. Installing OpenJDK 17...")
-        os.system("apt-get update -y && apt-get install -y openjdk-17-jdk")
-        print("✅ JDK installation complete.")
+        print("⚠️ JDK not found. Starting background installation...")
+        threading.Thread(target=install_jdk_background, daemon=True).start()
     else:
         print("✅ JDK already installed.")
+
 
 # --------------------------- App Setup ---------------------------
 app = Flask(__name__)
