@@ -4,24 +4,6 @@ from flask_cors import CORS
 import subprocess, tempfile, os, re, shutil, logging
 from bs4 import BeautifulSoup
 
-# --------------------------- JDK Installer ---------------------------
-import threading
-
-def install_jdk_background():
-    """Install JDK in background thread to avoid blocking Render startup."""
-    print("⚙️ Installing OpenJDK 17 in background...")
-    os.system("apt-get update -y && apt-get install -y openjdk-17-jdk")
-    print("✅ JDK installation complete (background).")
-
-def ensure_jdk():
-    """Ensure JDK is installed; start background install if missing."""
-    if shutil.which('javac') is None:
-        print("⚠️ JDK not found. Starting background installation...")
-        threading.Thread(target=install_jdk_background, daemon=True).start()
-    else:
-        print("✅ JDK already installed.")
-
-ensure_jdk()
 # --------------------------- App Setup ---------------------------
 app = Flask(__name__)
 CORS(app, origins=["*"], supports_credentials=False)
@@ -36,41 +18,79 @@ class CodeAnalyzer:
 
     def __init__(self):
         self.language_configs = {
-            'python': {
-                'extension': '.py',
-                'command': ['python3', '-m', 'py_compile'],
-                'error_patterns': [
-                    (r'SyntaxError:', 'Syntax Error'),
-                    (r'IndentationError:', 'Indentation Error'),
-                    (r'NameError:', 'Name Error'),
-                    (r'TypeError:', 'Type Error'),
-                    (r'ValueError:', 'Value Error'),
-                    (r'RuntimeError:', 'Runtime Error')
-                ],
-                'suggestions': [
-                    '💡 Use f-strings for formatting strings',
-                    '💡 Follow PEP8 style guide',
-                    '💡 Add type hints for readability',
-                    '💡 Avoid global variables when possible',
-                    '💡 Catch exceptions with try-except',
-                    '💡 Modularize code into functions/classes'
-                ],
-                'pre_check': lambda code: {
-                    'status': 'error',
-                    'message': '❌ This does not look like Python code',
-                    'suggestions': ['Check that you selected the correct language']
-                } if re.search(
-                    r'\bSystem\.out\.println\b|'
-                    r'\bpublic\s+class\b|'
-                    r'\bint\s+\w+\s*=\b|'
-                    r'#include\s*<.*?>|'
-                    r'\bconsole\.log\b|'
-                    r'<\s*html\b|'
-                    r'<\?php|'
-                    r'\bfunc\s+\w+\('
-                    , code
-                ) else None
-            },
+           'python': {
+    'extension': '.py',
+    'command'python': {
+    'extension': '.py',
+    'command': ['python3', '-m', 'py_compile'],
+    'error_patterns': [
+        (r'SyntaxError:', 'Syntax Error'),
+        (r'IndentationError:', 'Indentation Error'),
+        (r'NameError:', 'Name Error'),
+        (r'TypeError:', 'Type Error'),
+        (r'ValueError:', 'Value Error'),
+        (r'RuntimeError:', 'Runtime Error')
+    ],
+    'suggestions': [
+        '💡 Use f-strings for formatting strings',
+        '💡 Follow PEP8 style guide',
+        '💡 Add type hints for readability',
+        '💡 Avoid global variables when possible',
+        '💡 Catch exceptions with try-except',
+        '💡 Modularize code into functions/classes'
+    ],
+    # -------------------- Pre-check for non-Python code --------------------
+    'pre_check': lambda code: {
+        'status': 'error',
+        'message': '❌ This does not look like Python code',
+        'suggestions': ['Check that you selected the correct language']
+    } if re.search(
+        r'\bSystem\.out\.println\b|'        # Java
+        r'\bpublic\s+class\b|'              # Java
+        r'\bint\s+\w+\s*=\b|'               # C/C++/Java
+        r'#include\s*<.*?>|'                # C/C++
+        r'\bconsole\.log\b|'                # JavaScript
+        r'<\s*html\b|'                      # HTML
+        r'<\?php|'                           # PHP
+        r'\bfunc\s+\w+\('                    # Go
+        , code
+    ) else None
+},
+': ['python3', '-m', 'py_compile'],
+    'error_patterns': [
+        (r'SyntaxError:', 'Syntax Error'),
+        (r'IndentationError:', 'Indentation Error'),
+        (r'NameError:', 'Name Error'),
+        (r'TypeError:', 'Type Error'),
+        (r'ValueError:', 'Value Error'),
+        (r'RuntimeError:', 'Runtime Error')
+    ],
+    'suggestions': [
+        '💡 Use f-strings for formatting strings',
+        '💡 Follow PEP8 style guide',
+        '💡 Add type hints for readability',
+        '💡 Avoid global variables when possible',
+        '💡 Catch exceptions with try-except',
+        '💡 Modularize code into functions/classes'
+    ],
+    # -------------------- Pre-check for non-Python code --------------------
+    'pre_check': lambda code: {
+        'status': 'error',
+        'message': '❌ This does not look like Python code',
+        'suggestions': ['Check that you selected the correct language']
+    } if re.search(
+        r'\bSystem\.out\.println\b|'        # Java
+        r'\bpublic\s+class\b|'              # Java
+        r'\bint\s+\w+\s*=\b|'               # C/C++/Java
+        r'#include\s*<.*?>|'                # C/C++
+        r'\bconsole\.log\b|'                # JavaScript
+        r'<\s*html\b|'                      # HTML
+        r'<\?php|'                           # PHP
+        r'\bfunc\s+\w+\('                    # Go
+        , code
+    ) else None
+},
+
             'c': {
                 'extension': '.c',
                 'command': ['gcc', '-fsyntax-only'],
@@ -230,7 +250,7 @@ analyzer = CodeAnalyzer()
 # ------------------- Routes ---------------------------
 @app.route('/')
 def index():
-    return render_template("JDK BACKEND RUNNING SUCCESSFULLY")
+    return render_template('index.html')
 
 
 @app.route('/analyze', methods=['POST'])
@@ -274,6 +294,5 @@ def favicon():
 
 # ------------------- Run App ---------------------------
 if __name__ == '__main__':
-    ensure_jdk()  # Ensure JDK is installed before Flask starts
     port = int(os.environ.get("PORT", 8080))
     app.run(host='0.0.0.0', port=port, debug=False)
