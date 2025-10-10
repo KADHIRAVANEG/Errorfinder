@@ -1,29 +1,31 @@
-# Use official Python 3.13 slim image as base
-FROM python:3.13-slim
+# ---------- Base Image ----------
+FROM python:3.11-slim
 
-# Set environment variables for Java
-ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
-ENV PATH="$JAVA_HOME/bin:$PATH"
+# ---------- Environment Setup ----------
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PORT=8080
 
-# Avoid Python buffering for logs
-ENV PYTHONUNBUFFERED=1
-
-# Install system dependencies and OpenJDK 17
-RUN apt-get update && \
-    apt-get install -y openjdk-17-jdk git curl && \
-    rm -rf /var/lib/apt/lists/*
-
-# Set working directory inside container
 WORKDIR /app
 
-# Copy project files to container
-COPY . /app
+# ---------- System Dependencies ----------
+# Install Java (OpenJDK 17) + gcc/g++ for C/C++ checks
+RUN apt-get update -y && \
+    apt-get install -y openjdk-17-jdk gcc g++ && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-# Install Python dependencies
+# ---------- Copy Project Files ----------
+COPY requirements.txt ./
+
+# ---------- Install Python Packages ----------
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Expose port for Render (use the port your app runs on)
-EXPOSE 10000
+# ---------- Copy App Source ----------
+COPY . .
 
-# Start the Flask app with gunicorn
-CMD ["gunicorn", "app:app", "-b", "0.0.0.0:10000"]
+# ---------- Expose Port ----------
+EXPOSE 8080
+
+# ---------- Run Flask via Gunicorn ----------
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "app:app"]
