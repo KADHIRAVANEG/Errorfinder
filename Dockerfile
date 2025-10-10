@@ -16,8 +16,8 @@ COPY . /app
 RUN pip3 install --upgrade pip
 RUN pip3 install -r requirements.txt
 
-# ------------------ Environment Variables ------------------
-ENV PORT 8080
+# ------------------ Expose Port (optional) ------------------
+EXPOSE 1000
 
 # ------------------ Start the Flask App ------------------
-CMD ["gunicorn", "app:app", "-b", "0.0.0.0:8080"]
+CMD ["sh", "-c", "gunicorn app:app --bind 0.0.0.0:$PORT --workers 1"]
