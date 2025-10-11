@@ -202,8 +202,13 @@ async function analyzeCode() {
     loader.style.display = "none";
     output.style.display = "block";
 
-    // Display backend result
-    resultText.innerText = `Language: ${language.toUpperCase()}\n\n${result.result}`;
+    // Correctly display output and error from backend
+    let displayText = `🌐 Language: ${language.toUpperCase()}\n\n`;
+    if (result.output) displayText += `🟢 Output:\n${result.output}\n\n`;
+    if (result.error) displayText += `🔴 Errors:\n${result.error}\n\n`;
+    if (!result.output && !result.error) displayText += "⚠ No output or errors found.";
+
+    resultText.innerText = displayText;
 
   } catch (err) {
     loader.style.display = "none";
@@ -212,6 +217,7 @@ async function analyzeCode() {
   }
 }
 </script>
+
 
 </body>
 </html>
