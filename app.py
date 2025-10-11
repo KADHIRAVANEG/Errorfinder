@@ -107,7 +107,7 @@ def analyze_code():
                 _, compile_err, compile_status = run_command(["javac", "Main.java"])
                 if compile_status != 0:
                     return jsonify({"error": compile_err}), 400
-                stdout, stderr, code_status = run_command(["java", "Main"])
+                stdout, stderr, code_status = run_command(["java", "-cp", ".", "Main"])
 
             else:
                 return jsonify({"error": f"❌ Unsupported language: {language}"}), 400
