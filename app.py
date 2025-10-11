@@ -5,7 +5,10 @@ import os
 import tempfile
 import traceback
 
-app = Flask(_name_)
+# ------------------------------
+# Initialize Flask App
+# ------------------------------
+app = Flask(__name__)
 CORS(app)
 
 # ------------------------------
@@ -28,11 +31,13 @@ def run_command(command, input_text=None):
     except Exception as e:
         return "", f"⚠ Error: {str(e)}", 1
 
+
 # ------------------------------
 # Health Check Route
 # ------------------------------
 @app.route('/')
 def home():
+    """Check backend health and Java availability."""
     java_path = subprocess.getoutput("which java")
     javac_path = subprocess.getoutput("which javac")
     return jsonify({
@@ -41,11 +46,13 @@ def home():
         "javac": javac_path or "Not found"
     })
 
+
 # ------------------------------
 # Main Analyzer Route
 # ------------------------------
 @app.route('/analyze', methods=['POST'])
 def analyze_code():
+    """Analyze or execute submitted code based on language."""
     try:
         data = request.get_json()
         language = data.get("language", "").lower()
@@ -58,7 +65,7 @@ def analyze_code():
         if language in ["html", "js", "javascript"]:
             return jsonify({
                 "language": language,
-                "output": "✅ HTML/JS code received successfully (frontend renders).",
+                "output": "✅ HTML/JS code received successfully (frontend handles rendering).",
                 "error": "",
                 "status": "success"
             })
@@ -117,10 +124,11 @@ def analyze_code():
         print("❌ Exception:", traceback.format_exc())
         return jsonify({"error": str(e)}), 500
 
+
 # ------------------------------
 # Main Entry
 # ------------------------------
-if _name_ == '_main_':
+if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     print(f"🚀 Starting Flask backend on port {port} ...")
     app.run(host='0.0.0.0', port=port, debug=True)
