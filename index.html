@@ -1,264 +1,210 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Code Error Finder</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: "Poppins", sans-serif;
-    }
-
-    body {
-      background: linear-gradient(135deg, #141e30, #243b55);
-      color: #fff;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 1300px;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 20px;
-      padding: 40px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-      animation: fadeIn 1.5s ease-in-out;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 30px;
-    }
-
-    h1 {
-      width: 100%;
-      text-align: center;
-      margin-bottom: 30px;
-      font-size: 2.5rem;
-      background: linear-gradient(to right, #00c6ff, #0072ff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .column {
-      flex: 1;
-      min-width: 350px;
-      background: rgba(255,255,255,0.05);
-      border-radius: 20px;
-      padding: 25px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-    }
-
-    .form-section select,
-    .form-section textarea,
-    .form-section button {
-      width: 100%;
-      padding: 15px;
-      border-radius: 10px;
-      border: none;
-      outline: none;
-      font-size: 1rem;
-      transition: 0.3s ease;
-    }
-
-    select {
-      background: #0f2027;
-      color: #fff;
-      border: 1px solid #00c6ff;
-      margin-bottom: 20px;
-    }
-
-    textarea {
-      background: #0f2027;
-      color: #fff;
-      resize: none;
-      min-height: 250px;
-      border: 1px solid #00c6ff;
-      margin-bottom: 20px;
-    }
-
-    textarea:focus, select:focus {
-      border-color: #ff8c00;
-      box-shadow: 0 0 10px #ff8c00;
-    }
-
-    button {
-      background: linear-gradient(to right, #00c6ff, #0072ff);
-      color: #fff;
-      font-size: 1.2rem;
-      font-weight: bold;
-      cursor: pointer;
-      border: none;
-      transition: 0.3s;
-    }
-
-    button:hover {
-      background: linear-gradient(to right, #ff8c00, #ff2e63);
-      transform: scale(1.05);
-    }
-
-    .loader {
-      display: none;
-      margin: 20px auto;
-      border: 8px solid rgba(255, 255, 255, 0.1);
-      border-left-color: #00c6ff;
-      border-radius: 50%;
-      width: 60px;
-      height: 60px;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    .output {
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 15px;
-      padding: 20px;
-      display: none;
-      animation: slideUp 0.8s ease-in-out;
-    }
-
-    .output h2 {
-      margin-bottom: 15px;
-      color: #00c6ff;
-    }
-
-    .output pre {
-      white-space: pre-wrap;
-      word-wrap: break-word;
-      background: #0f2027;
-      padding: 15px;
-      border-radius: 10px;
-      color: #fffa;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes slideUp {
-      from { transform: translateY(50px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-
-    footer {
-      margin-top: 30px;
-      width: 100%;
-      text-align: center;
-      font-size: 0.9rem;
-      opacity: 0.7;
-    }
-
-    @media (max-width: 900px) {
-      .container {
-        flex-direction: column;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<title>🚀 Code Error Finder</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; font-family:"Poppins",sans-serif; }
+body {
+  background: linear-gradient(135deg,#141e30,#243b55);
+  color:#fff;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  padding:40px 20px;
+}
+.container {
+  width:100%;
+  max-width:1600px;
+  background:rgba(255,255,255,0.05);
+  border-radius:25px;
+  padding:60px 50px;
+  box-shadow:0 15px 40px rgba(0,0,0,0.4);
+  display:flex;
+  flex-wrap:wrap;
+  gap:50px;
+  animation:fadeIn 1.2s ease-in-out;
+}
+h1 {
+  width:100%;
+  text-align:center;
+  margin-bottom:60px;
+  font-size:3.5rem;
+  background:linear-gradient(to right,#00c6ff,#0072ff);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.column {
+  flex:1;
+  min-width:400px;
+  background:rgba(255,255,255,0.05);
+  border-radius:25px;
+  padding:40px 35px;
+  box-shadow:0 8px 30px rgba(0,0,0,0.3);
+  display:flex;
+  flex-direction:column;
+  gap:25px;
+}
+label { font-weight:600; font-size:1.2rem; }
+select, textarea, button {
+  width:100%;
+  padding:20px 18px;
+  border-radius:15px;
+  border:none;
+  font-size:1.2rem;
+  transition:0.3s ease;
+  margin-bottom:25px;
+}
+select, textarea {
+  background:#0f2027;
+  color:#fff;
+  border:2px solid #00c6ff;
+}
+textarea { resize:none; min-height:450px; line-height:1.8; }
+textarea:focus, select:focus {
+  border-color:#ff8c00;
+  box-shadow:0 0 15px #ff8c00;
+}
+button {
+  background:linear-gradient(to right,#00c6ff,#0072ff);
+  color:#fff;
+  font-size:1.3rem;
+  font-weight:bold;
+  cursor:pointer;
+  padding:20px;
+}
+button:hover {
+  background:linear-gradient(to right,#ff8c00,#ff2e63);
+  transform:scale(1.08);
+}
+.loader {
+  display:none;
+  margin:40px auto;
+  border:12px solid rgba(255,255,255,0.1);
+  border-left-color:#00c6ff;
+  border-radius:50%;
+  width:90px; height:90px;
+  animation:spin 1s linear infinite;
+}
+@keyframes spin { to{transform:rotate(360deg);} }
+.output {
+  display:none;
+  background:rgba(255,255,255,0.08);
+  border-radius:25px;
+  padding:35px;
+  max-height:700px;
+  overflow-y:auto;
+  animation:slideUp 0.8s ease-in-out;
+}
+.output h2 { margin-bottom:25px; color:#00c6ff; font-size:1.8rem; }
+.output pre {
+  white-space:pre-wrap;
+  word-wrap:break-word;
+  background:#0f2027;
+  padding:25px;
+  border-radius:15px;
+  color:#fffa;
+  font-size:1.1rem;
+}
+.action-buttons { display:flex; gap:15px; margin-bottom:20px; }
+.action-buttons button { flex:1; }
+@keyframes fadeIn { from{opacity:0; transform:translateY(-20px);} to{opacity:1; transform:translateY(0);} }
+@keyframes slideUp { from{transform:translateY(50px);opacity:0;} to{transform:translateY(0);opacity:1;} }
+footer { margin-top:50px; text-align:center; font-size:1.1rem; opacity:0.8; }
+@media(max-width:1000px){ .container{flex-direction:column;} }
+</style>
 </head>
-
 <body>
-  <div class="container">
-    <h1>🚀 Code Error Finder</h1>
+<div class="container">
+  <h1>🚀 Code Error Finder</h1>
 
-    <div class="column">
-      <div class="form-section">
-        <select id="language">
-          <option value="python">🐍 Python</option>
-          <option value="c">🔵 C</option>
-          <option value="cpp">🟣 C++</option>
-          <option value="java">☕ Java</option>
-          <option value="js">🟡 JavaScript</option>
-          <option value="html">🌐 HTML</option>
-        </select>
+  <div class="column">
+    <label for="language">Select Language:</label>
+    <select id="language">
+      <option value="python">🐍 Python</option>
+      <option value="c">🔵 C</option>
+      <option value="cpp">🟣 C++</option>
+      <option value="java">☕ Java</option>
+      <option value="js">🟡 JavaScript</option>
+      <option value="html">🌐 HTML</option>
+    </select>
 
-        <textarea id="codeInput" placeholder="Paste your code here..."></textarea>
-        <button onclick="analyzeCode()">Analyze Code</button>
-      </div>
+    <label for="codeInput">Paste Your Code:</label>
+    <textarea id="codeInput" placeholder="Paste your code here..."></textarea>
+
+    <div class="action-buttons">
+      <button onclick="analyzeCode()">Analyze Code</button>
+      <button onclick="clearCode()">Clear Code</button>
     </div>
-
-    <div class="column">
-      <div class="loader" id="loader"></div>
-
-      <div class="output" id="output">
-        <h2>🔍 Analysis Result</h2>
-        <pre id="resultText"></pre>
-      </div>
-    </div>
-
-    <footer>&copy; 2025 ML-Powered Error Finder</footer>
   </div>
 
-  <script>
-    async function analyzeCode() {
-      const code = document.getElementById("codeInput").value.trim();
-      const language = document.getElementById("language").value;
-      const loader = document.getElementById("loader");
-      const output = document.getElementById("output");
-      const resultText = document.getElementById("resultText");
+  <div class="column">
+    <div class="loader" id="loader"></div>
+    <div class="output" id="output">
+      <h2>🔍 Analysis Result</h2>
+      <div class="action-buttons">
+        <button onclick="copyOutput()">📋 Copy Output</button>
+      </div>
+      <pre id="resultText"></pre>
+    </div>
+  </div>
 
-      if (!code) {
-        alert("⚠️ Please paste some code before analyzing!");
-        return;
-      }
+  <footer>&copy; 2025 ML-Powered Error Finder</footer>
+</div>
 
-      loader.style.display = "block";
-      output.style.display = "none";
+<script>
+const BACKEND_URL = 'https://errorfinder.onrender.com';
 
-      try {
-        const response = await fetch("/analyze", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ code, language })
-        });
+function clearCode() {
+  document.getElementById("codeInput").value = "";
+  document.getElementById("output").style.display = "none";
+}
 
-        loader.style.display = "none";
-        output.style.display = "block";
+function copyOutput() {
+  const text = document.getElementById("resultText").innerText;
+  navigator.clipboard.writeText(text);
+  alert("✅ Output copied to clipboard!");
+}
 
-        let result;
-        try {
-          result = await response.json();
-        } catch {
-          const text = await response.text();
-          resultText.innerText = `❌ Invalid server response:\n${text}`;
-          return;
-        }
+async function analyzeCode() {
+  const code = document.getElementById("codeInput").value.trim();
+  const language = document.getElementById("language").value;
+  const loader = document.getElementById("loader");
+  const output = document.getElementById("output");
+  const resultText = document.getElementById("resultText");
 
-        let displayText = `Language: ${language.toUpperCase()}\n\n`;
-        if (result.message) displayText += `${result.message}\n\n`;
+  if (!code) {
+    alert("⚠ Please paste some code!");
+    return;
+  }
 
-        if (result.errors?.length) {
-          displayText += "🔍 Errors Found:\n";
-          result.errors.forEach((e, i) => {
-            displayText += `${i + 1}. [${e.type}] ${e.message}\n`;
-          });
-          displayText += "\n";
-        }
+  loader.style.display = "block";
+  output.style.display = "none";
 
-        if (result.suggestions?.length) {
-          displayText += "💡 Suggestions:\n";
-          result.suggestions.forEach((s, i) => {
-            displayText += `${i + 1}. ${s}\n`;
-          });
-        }
+  try {
+    const response = await fetch(${BACKEND_URL}/analyze, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code, language })
+    });
 
-        resultText.innerText = displayText || "✅ No major issues found.";
+    const result = await response.json();
+    loader.style.display = "none";
+    output.style.display = "block";
 
-      } catch (error) {
-        loader.style.display = "none";
-        output.style.display = "block";
-        resultText.innerText =
-          `❌ Connection Error: ${error.message}\n\n` +
-          `💡 Check if your backend (Flask + Gunicorn + Docker) is running properly.`;
-      }
-    }
-  </script>
+    let displayText = Language: ${language.toUpperCase()}\n\n;
+    if (result.output) displayText += Output:\n${result.output}\n\n;
+    if (result.error) displayText += Errors:\n${result.error}\n\n;
+    if (!result.output && !result.error) displayText += "⚠ No output or errors found.";
+
+    resultText.innerText = displayText;
+  } catch (err) {
+    loader.style.display = "none";
+    output.style.display = "block";
+    resultText.innerText = ❌ Connection Error:\n${err.message}\n\n💡 Check if your backend is running.;
+  }
+}
+</script>
 </body>
 </html>
