@@ -163,7 +163,7 @@ footer {
 <footer>&copy; 2025 ML-Powered Error Finder</footer>
 
 <script>
-const BACKEND_URL = 'https://errorfinder.onrender.com';
+const BACKEND_URL = 'https://errorfinder.onrender.com/analyze';
 
 function clearCode() {
   document.getElementById("codeInput").value = "";
@@ -192,7 +192,7 @@ async function analyzeCode() {
   output.style.display = "none";
 
   try {
-    const response = await fetch(${BACKEND_URL}/analyze, {
+    const response = await fetch(BACKEND_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ code, language })
@@ -202,16 +202,13 @@ async function analyzeCode() {
     loader.style.display = "none";
     output.style.display = "block";
 
-    let displayText = Language: ${language.toUpperCase()}\n\n;
-    if (result.output) displayText += Output:\n${result.output}\n\n;
-    if (result.error) displayText += Errors:\n${result.error}\n\n;
-    if (!result.output && !result.error) displayText += "⚠ No output or errors found.";
+    // Display backend result
+    resultText.innerText = `Language: ${language.toUpperCase()}\n\n${result.result}`;
 
-    resultText.innerText = displayText;
   } catch (err) {
     loader.style.display = "none";
     output.style.display = "block";
-    resultText.innerText = ❌ Connection Error:\n${err.message}\n\n💡 Check if your backend is running.;
+    resultText.innerText = `❌ Connection Error:\n${err.message}\n\n💡 Check if your backend is running.`;
   }
 }
 </script>
