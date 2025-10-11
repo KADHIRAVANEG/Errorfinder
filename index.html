@@ -154,7 +154,7 @@ footer { margin-top:50px; text-align:center; font-size:1.1rem; opacity:0.8; }
 </div>
 
 <script>
-const BACKEND_URL = 'https://errorfinder.onrender.com';
+const BACKEND_URL = "https://errorfinder.onrender.com"; // or "http://localhost:5000"
 
 function clearCode() {
   document.getElementById("codeInput").value = "";
@@ -183,26 +183,26 @@ async function analyzeCode() {
   output.style.display = "none";
 
   try {
-    const response = await fetch(${BACKEND_URL}/analyze, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code, language })
+    const response = await fetch(`${BACKEND_URL}/analyze`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code, language }),
     });
 
     const result = await response.json();
     loader.style.display = "none";
     output.style.display = "block";
 
-    let displayText = Language: ${language.toUpperCase()}\n\n;
-    if (result.output) displayText += Output:\n${result.output}\n\n;
-    if (result.error) displayText += Errors:\n${result.error}\n\n;
+    let displayText = `🌐 Language: ${language.toUpperCase()}\n\n`;
+    if (result.output) displayText += `🟢 Output:\n${result.output}\n\n`;
+    if (result.error) displayText += `🔴 Errors:\n${result.error}\n\n`;
     if (!result.output && !result.error) displayText += "⚠ No output or errors found.";
 
     resultText.innerText = displayText;
   } catch (err) {
     loader.style.display = "none";
     output.style.display = "block";
-    resultText.innerText = ❌ Connection Error:\n${err.message}\n\n💡 Check if your backend is running.;
+    resultText.innerText = `❌ Connection Error:\n${err.message}\n\n💡 Check if your backend is running.`;
   }
 }
 </script>
