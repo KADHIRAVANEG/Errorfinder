@@ -10,8 +10,8 @@ body {
   color:#fff;
   min-height:100vh;
   display:flex;
-  justify-content:center;
-  align-items:flex-start;
+  flex-direction:column;
+  align-items:center;
   padding:40px 20px;
 }
 .container {
@@ -110,12 +110,21 @@ button:hover {
 .action-buttons { display:flex; gap:15px; margin-bottom:20px; }
 .action-buttons button { flex:1; }
 @keyframes fadeIn { from{opacity:0; transform:translateY(-20px);} to{opacity:1; transform:translateY(0);} }
-@keyframes slideUp { from{transform:translateY(50px);opacity:0;} to{transform:translateY(0);opacity:1;} }
-footer { margin-top:50px; text-align:center; font-size:1.1rem; opacity:0.8; }
+@keyframes slideUp { from{transform:translateY(50px);opacity:0;} to{transform:translateY(0);opacity:1);} }
+
+/* Footer styling */
+footer {
+  margin-top:40px;
+  text-align:center;
+  font-size:1.1rem;
+  opacity:0.8;
+}
+
 @media(max-width:1000px){ .container{flex-direction:column;} }
 </style>
 </head>
 <body>
+
 <div class="container">
   <h1>🚀 Code Error Finder</h1>
 
@@ -149,12 +158,12 @@ footer { margin-top:50px; text-align:center; font-size:1.1rem; opacity:0.8; }
       <pre id="resultText"></pre>
     </div>
   </div>
-
-  <footer>&copy; 2025 ML-Powered Error Finder</footer>
 </div>
 
+<footer>&copy; 2025 ML-Powered Error Finder</footer>
+
 <script>
-const BACKEND_URL = "https://errorfinder.onrender.com"; // or "http://localhost:5000"
+const BACKEND_URL = 'https://errorfinder.onrender.com';
 
 function clearCode() {
   document.getElementById("codeInput").value = "";
@@ -183,28 +192,29 @@ async function analyzeCode() {
   output.style.display = "none";
 
   try {
-    const response = await fetch(`${BACKEND_URL}/analyze`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code, language }),
+    const response = await fetch(${BACKEND_URL}/analyze, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code, language })
     });
 
     const result = await response.json();
     loader.style.display = "none";
     output.style.display = "block";
 
-    let displayText = `🌐 Language: ${language.toUpperCase()}\n\n`;
-    if (result.output) displayText += `🟢 Output:\n${result.output}\n\n`;
-    if (result.error) displayText += `🔴 Errors:\n${result.error}\n\n`;
+    let displayText = Language: ${language.toUpperCase()}\n\n;
+    if (result.output) displayText += Output:\n${result.output}\n\n;
+    if (result.error) displayText += Errors:\n${result.error}\n\n;
     if (!result.output && !result.error) displayText += "⚠ No output or errors found.";
 
     resultText.innerText = displayText;
   } catch (err) {
     loader.style.display = "none";
     output.style.display = "block";
-    resultText.innerText = `❌ Connection Error:\n${err.message}\n\n💡 Check if your backend is running.`;
+    resultText.innerText = ❌ Connection Error:\n${err.message}\n\n💡 Check if your backend is running.;
   }
 }
 </script>
+
 </body>
 </html>
