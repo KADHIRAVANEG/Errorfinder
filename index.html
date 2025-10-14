@@ -107,6 +107,14 @@ button:hover {
   color:#fffa;
   font-size:1.1rem;
 }
+iframe {
+  width: 100%;
+  height: 400px;
+  border: 2px solid #00c6ff;
+  border-radius: 15px;
+  margin-top: 25px;
+  background: #0f2027;
+}
 .action-buttons { display:flex; gap:15px; margin-bottom:20px; }
 .action-buttons button { flex:1; }
 @keyframes fadeIn { from{opacity:0; transform:translateY(-20px);} to{opacity:1; transform:translateY(0);} }
@@ -156,6 +164,8 @@ footer {
         <button onclick="copyOutput()">📋 Copy Output</button>
       </div>
       <pre id="resultText"></pre>
+      <!-- HTML Preview -->
+      <iframe id="htmlPreview" style="display:none;"></iframe>
     </div>
   </div>
 </div>
@@ -168,6 +178,7 @@ const BACKEND_URL = 'https://errorfinder.onrender.com/analyze';
 function clearCode() {
   document.getElementById("codeInput").value = "";
   document.getElementById("output").style.display = "none";
+  document.getElementById("htmlPreview").style.display = "none";
 }
 
 function copyOutput() {
@@ -182,6 +193,7 @@ async function analyzeCode() {
   const loader = document.getElementById("loader");
   const output = document.getElementById("output");
   const resultText = document.getElementById("resultText");
+  const htmlPreview = document.getElementById("htmlPreview");
 
   if (!code) {
     alert("⚠ Please paste some code!");
@@ -190,6 +202,7 @@ async function analyzeCode() {
 
   loader.style.display = "block";
   output.style.display = "none";
+  htmlPreview.style.display = "none";
 
   try {
     const response = await fetch(BACKEND_URL, {
@@ -202,13 +215,20 @@ async function analyzeCode() {
     loader.style.display = "none";
     output.style.display = "block";
 
-    // Correctly display output and error from backend
     let displayText = `🌐 Language: ${language.toUpperCase()}\n\n`;
     if (result.output) displayText += `🟢 Output:\n${result.output}\n\n`;
     if (result.error) displayText += `🔴 Errors:\n${result.error}\n\n`;
     if (!result.output && !result.error) displayText += "⚠ No output or errors found.";
 
     resultText.innerText = displayText;
+
+    // Show HTML preview if HTML code
+    if(language === "html") {
+      htmlPreview.srcdoc = code;
+      htmlPreview.style.display = "block";
+    } else {
+      htmlPreview.style.display = "none";
+    }
 
   } catch (err) {
     loader.style.display = "none";
@@ -217,7 +237,6 @@ async function analyzeCode() {
   }
 }
 </script>
-
 
 </body>
 </html>
