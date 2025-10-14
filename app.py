@@ -4,10 +4,8 @@ import subprocess
 import os
 import tempfile
 import traceback
+import re
 
-# ------------------------------
-# Initialize Flask App
-# ------------------------------
 app = Flask(__name__)
 CORS(app)
 
@@ -15,7 +13,6 @@ CORS(app)
 # Helper Function: Run Commands Safely
 # ------------------------------
 def run_command(command, input_text=None):
-    """Execute a system command with optional input and timeout."""
     try:
         result = subprocess.run(
             command,
@@ -31,13 +28,11 @@ def run_command(command, input_text=None):
     except Exception as e:
         return "", f"⚠ Error: {str(e)}", 1
 
-
 # ------------------------------
-# Health Check Route
+# Root Route
 # ------------------------------
 @app.route('/')
 def home():
-    """Check backend health and Java availability."""
     java_path = subprocess.getoutput("which java")
     javac_path = subprocess.getoutput("which javac")
     return jsonify({
@@ -46,13 +41,11 @@ def home():
         "javac": javac_path or "Not found"
     })
 
-
 # ------------------------------
-# Main Analyzer Route
+# Analyzer Route
 # ------------------------------
 @app.route('/analyze', methods=['POST'])
 def analyze_code():
-    """Analyze or execute submitted code based on language."""
     try:
         data = request.get_json()
         language = data.get("language", "").lower()
@@ -61,16 +54,76 @@ def analyze_code():
         if not code or not language:
             return jsonify({"error": "⚠ Missing code or language."}), 400
 
-        # Skip execution for frontend languages
-        if language in ["html", "js", "javascript"]:
+        # ===============================
+        # FRONTEND LANGUAGES
+        # ===============================
+
+        # ---------- HTML ----------
+        if language == "html":
+            with tempfile.TemporaryDirectory() as temp_dir:
+                html_path = os.path.join(temp_dir, "index.html")
+                with open(html_path, "w") as f:
+                    f.write(code)
+
+                # Syntax check using html5validator
+                stdout, stderr, status = run_command(
+                    ["html5validator", "--root", temp_dir, "--show-warnings"]
+                )
+
+                if status != 0:
+                    return jsonify({
+                        "language": "html",
+                        "output": "",
+                        "error": f"❌ HTML syntax errors:\n{stderr}",
+                        "status": "error"
+                    })
+
+                # Syntax valid → Return HTML for frontend preview
+                return jsonify({
+                    "language": "html",
+                    "output": code,
+                    "error": "",
+                    "status": "success"
+                })
+
+        # ---------- JAVASCRIPT ----------
+        if language in ["js", "javascript"]:
+            with tempfile.TemporaryDirectory() as temp_dir:
+                js_path = os.path.join(temp_dir, "main.js")
+                with open(js_path, "w") as f:
+                    f.write(code)
+
+                # Syntax check
+                _, stderr, status = run_command(["node", "--check", js_path])
+                if status != 0:
+                    return jsonify({
+                        "language": "javascript",
+                        "output": "",
+                        "error": f"❌ JS syntax error:\n{stderr}",
+                        "status": "error"
+                    })
+
+                # Execute valid JS
+                stdout, stderr, exec_status = run_command(["node", js_path])
+                return jsonify({
+                    "language": "javascript",
+                    "output": stdout.strip(),
+                    "error": stderr.strip(),
+                    "status": "success" if exec_status == 0 else "error"
+                })
+
+        # ---------- HTML + JS ----------
+        if "<script>" in code and "</script>" in code:
             return jsonify({
-                "language": language,
-                "output": "✅ HTML/JS code received successfully (frontend handles rendering).",
+                "language": "html+js",
+                "output": code,
                 "error": "",
                 "status": "success"
             })
 
-        # Use a safe temporary directory for compilation & execution
+        # ===============================
+        # BACKEND LANGUAGES
+        # ===============================
         with tempfile.TemporaryDirectory() as temp_dir:
             os.chdir(temp_dir)
             stdout = stderr = ""
@@ -100,19 +153,34 @@ def analyze_code():
                     return jsonify({"error": compile_err}), 400
                 stdout, stderr, code_status = run_command(["./main"])
 
-            # ---- Java ----
+            # ---- Java (Dynamic Class + Syntax Check) ----
             elif language == "java":
-                with open("Main.java", "w") as f:
+                match = re.search(r'public\s+class\s+(\w+)', code)
+                class_name = match.group(1) if match else "Main"
+                file_name = f"{class_name}.java"
+
+                with open(file_name, "w") as f:
                     f.write(code)
-                _, compile_err, compile_status = run_command(["javac", "Main.java"])
+
+                # Compile for syntax check
+                _, compile_err, compile_status = run_command(["javac", file_name])
                 if compile_status != 0:
-                    return jsonify({"error": compile_err}), 400
-                stdout, stderr, code_status = run_command(["java", "-cp", ".", "Main"])
+                    return jsonify({
+                        "language": "java",
+                        "output": "",
+                        "error": f"❌ Java syntax error:\n{compile_err}",
+                        "status": "error"
+                    })
+
+                # Execute if syntax OK
+                stdout, stderr, code_status = run_command(["java", "-cp", ".", class_name])
 
             else:
                 return jsonify({"error": f"❌ Unsupported language: {language}"}), 400
 
-        # ---- Prepare Final Response ----
+        # ===============================
+        # Final Response
+        # ===============================
         return jsonify({
             "language": language,
             "output": stdout.strip(),
@@ -124,9 +192,8 @@ def analyze_code():
         print("❌ Exception:", traceback.format_exc())
         return jsonify({"error": str(e)}), 500
 
-
 # ------------------------------
-# Main Entry
+# Start Flask Server
 # ------------------------------
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
