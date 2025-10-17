@@ -6,10 +6,6 @@ RUN apt-get update -y && \
     apt-get install -y python3 python3-pip python3-venv gcc g++ curl npm git && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# ------------------ Install html5validator Dependencies ------------------
-RUN pip3 install --upgrade pip setuptools wheel && \
-    pip3 install html5validator
-
 # ------------------ Install Node.js for JavaScript Execution ------------------
 RUN npm install -g n && \
     n stable && \
@@ -23,7 +19,8 @@ WORKDIR /app
 COPY . /app
 
 # ------------------ Install Python Dependencies ------------------
-RUN pip3 install -r requirements.txt || true
+RUN pip3 install --upgrade pip
+RUN pip3 install -r requirements.txt
 
 # ------------------ Expose Port ------------------
 EXPOSE 1000
