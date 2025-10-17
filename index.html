@@ -172,8 +172,7 @@ footer {
 
 <footer>&copy; 2025 ML-Powered Error Finder</footer>
 
-<script>
-const BACKEND_URL = 'https://errorfinder.onrender.com/analyze';
+<script>const BACKEND_URL = 'https://errorfinder.onrender.com/analyze';
 
 function clearCode() {
   document.getElementById("codeInput").value = "";
@@ -216,25 +215,14 @@ async function analyzeCode() {
     output.style.display = "block";
 
     let displayText = `🌐 Language: ${language.toUpperCase()}\n\n`;
-
-    // For HTML: show only errors, no code in <pre>
-    if (language === "html") {
-      if (result.error) {
-        displayText += `🔴 Errors:\n${result.error}\n\n`;
-      }
-    } else {
-      // Non-HTML: show output and errors
-      if (result.output) displayText += `🟢 Output:\n${result.output}\n\n`;
-      if (result.error) displayText += `🔴 Errors:\n${result.error}\n\n`;
-    }
-
-    if (!result.output && !result.error) displayText += "⚠ No output or errors found.";
+    if (result.error) displayText += `🔴 Errors:\n${result.error}\n\n`;
+    if (!result.error && !result.output) displayText += "✅ Code is valid.";
 
     resultText.innerText = displayText;
 
-    // Show HTML preview only if HTML and no errors
-    if (language === "html" && !result.error) {
-      htmlPreview.srcdoc = code;
+    // Show HTML preview only if valid and preview exists
+    if(language === "html" && result.status === "success" && result.preview) {
+      htmlPreview.srcdoc = result.preview;
       htmlPreview.style.display = "block";
     } else {
       htmlPreview.style.display = "none";
@@ -246,6 +234,7 @@ async function analyzeCode() {
     resultText.innerText = `❌ Connection Error:\n${err.message}\n\n💡 Check if your backend is running.`;
   }
 }
+
 </script>
 
 </body>
