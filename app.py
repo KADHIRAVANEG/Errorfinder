@@ -64,15 +64,34 @@ def analyze_code():
         if language == "html":
             from bs4 import BeautifulSoup
             try:
-                # Parse the HTML to check for syntax issues
                 soup = BeautifulSoup(code, "html.parser")
-                # If BeautifulSoup parses without exception, consider it valid
+                errors = []
+
+                # Basic HTML validation
+                if not soup.find("html"):
+                    errors.append("⚠ Missing <html> tag.")
+                if not soup.find("head"):
+                    errors.append("⚠ Missing <head> tag.")
+                if not soup.find("body"):
+                    errors.append("⚠ Missing <body> tag.")
+
+                if errors:
+                    return jsonify({
+                        "language": "html",
+                        "output": "",
+                        "error": "\n".join(errors),
+                        "status": "error"
+                    })
+
+                # Valid HTML → send preview only
                 return jsonify({
                     "language": "html",
                     "output": "",
                     "error": "",
-                    "status": "success"
+                    "status": "success",
+                    "preview": code
                 })
+
             except Exception as e:
                 return jsonify({
                     "language": "html",
@@ -88,7 +107,6 @@ def analyze_code():
                 with open(js_path, "w") as f:
                     f.write(code)
 
-                # Syntax check
                 _, stderr, status = run_command(["node", "--check", js_path])
                 if status != 0:
                     return jsonify({
@@ -98,7 +116,6 @@ def analyze_code():
                         "status": "error"
                     })
 
-                # Execute valid JS
                 stdout, stderr, exec_status = run_command(["node", js_path])
                 return jsonify({
                     "language": "javascript",
@@ -111,9 +128,10 @@ def analyze_code():
         if "<script>" in code and "</script>" in code:
             return jsonify({
                 "language": "html+js",
-                "output": code,
+                "output": "",
                 "error": "",
-                "status": "success"
+                "status": "success",
+                "preview": code
             })
 
         # ===============================
@@ -157,7 +175,6 @@ def analyze_code():
                 with open(file_name, "w") as f:
                     f.write(code)
 
-                # Compile for syntax check
                 _, compile_err, compile_status = run_command(["javac", file_name])
                 if compile_status != 0:
                     return jsonify({
@@ -167,15 +184,11 @@ def analyze_code():
                         "status": "error"
                     })
 
-                # Execute if syntax OK
                 stdout, stderr, code_status = run_command(["java", "-cp", ".", class_name])
 
             else:
                 return jsonify({"error": f"❌ Unsupported language: {language}"}), 400
 
-        # ===============================
-        # Final Response
-        # ===============================
         return jsonify({
             "language": language,
             "output": stdout.strip(),
