@@ -216,14 +216,24 @@ async function analyzeCode() {
     output.style.display = "block";
 
     let displayText = `🌐 Language: ${language.toUpperCase()}\n\n`;
-    if (result.output) displayText += `🟢 Output:\n${result.output}\n\n`;
-    if (result.error) displayText += `🔴 Errors:\n${result.error}\n\n`;
+
+    // For HTML: show only errors, no code in <pre>
+    if (language === "html") {
+      if (result.error) {
+        displayText += `🔴 Errors:\n${result.error}\n\n`;
+      }
+    } else {
+      // Non-HTML: show output and errors
+      if (result.output) displayText += `🟢 Output:\n${result.output}\n\n`;
+      if (result.error) displayText += `🔴 Errors:\n${result.error}\n\n`;
+    }
+
     if (!result.output && !result.error) displayText += "⚠ No output or errors found.";
 
     resultText.innerText = displayText;
 
-    // Show HTML preview if HTML code
-    if(language === "html") {
+    // Show HTML preview only if HTML and no errors
+    if (language === "html" && !result.error) {
       htmlPreview.srcdoc = code;
       htmlPreview.style.display = "block";
     } else {
