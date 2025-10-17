@@ -69,7 +69,7 @@ def analyze_code():
                 # If BeautifulSoup parses without exception, consider it valid
                 return jsonify({
                     "language": "html",
-                    "output": code,
+                    "output": "",
                     "error": "",
                     "status": "success"
                 })
