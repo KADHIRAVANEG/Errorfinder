@@ -20,7 +20,7 @@ COPY . /app
 
 # ------------------ Install Python Dependencies ------------------
 RUN pip3 install --upgrade pip setuptools wheel
-RUN pip3 install flask flask-cors beautifulsoup4
+RUN pip3 install flask flask-cors beautifulsoup4 gunicorn
 
 # ------------------ Expose Port ------------------
 EXPOSE 1000
@@ -30,4 +30,4 @@ ENV PORT=1000
 ENV PYTHONUNBUFFERED=1
 
 # ------------------ Start Flask App ------------------
-CMD ["sh", "-c", "gunicorn app:app --bind 0.0.0.0:$PORT --workers 1"]
+CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:1000", "--workers", "1"]
