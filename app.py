@@ -62,24 +62,25 @@ def analyze_code():
 
         # ---------- HTML ----------
         if language == "html":
-            from bs4 import Beautiful
+            from bs4 import BeautifulSoup
             try:
-        # Parse the HTML to check for syntax issues
-            soup = BeautifulSoup(code, "html.parser")
-        # If BeautifulSoup parses without exception, consider it valid
-            return jsonify({
-            "language": "html",
-            "output": code,
-            "error": "",
-            "status": "success"
-            })
-        except Exception as e:
-            return jsonify({
-                "language": "html",
-                "output": "",
-                "error": f"❌ HTML parsing error:\n{str(e)}",
-                "status": "error"
-            })
+                # Parse the HTML to check for syntax issues
+                soup = BeautifulSoup(code, "html.parser")
+                # If BeautifulSoup parses without exception, consider it valid
+                return jsonify({
+                    "language": "html",
+                    "output": code,
+                    "error": "",
+                    "status": "success"
+                })
+            except Exception as e:
+                return jsonify({
+                    "language": "html",
+                    "output": "",
+                    "error": f"❌ HTML parsing error:\n{str(e)}",
+                    "status": "error"
+                })
+
         # ---------- JAVASCRIPT ----------
         if language in ["js", "javascript"]:
             with tempfile.TemporaryDirectory() as temp_dir:
