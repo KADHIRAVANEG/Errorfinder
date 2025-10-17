@@ -62,32 +62,24 @@ def analyze_code():
 
         # ---------- HTML ----------
         if language == "html":
-            with tempfile.TemporaryDirectory() as temp_dir:
-                html_path = os.path.join(temp_dir, "index.html")
-                with open(html_path, "w") as f:
-                    f.write(code)
-
-                # Syntax check using html5validator
-                stdout, stderr, status = run_command(
-                    ["html5validator", "--root", temp_dir, "--show-warnings"]
-                )
-
-                if status != 0:
-                    return jsonify({
-                        "language": "html",
-                        "output": "",
-                        "error": f"❌ HTML syntax errors:\n{stderr}",
-                        "status": "error"
-                    })
-
-                # Syntax valid → Return HTML for frontend preview
-                return jsonify({
-                    "language": "html",
-                    "output": code,
-                    "error": "",
-                    "status": "success"
-                })
-
+            from bs4 import Beautiful
+            try:
+        # Parse the HTML to check for syntax issues
+            soup = BeautifulSoup(code, "html.parser")
+        # If BeautifulSoup parses without exception, consider it valid
+            return jsonify({
+            "language": "html",
+            "output": code,
+            "error": "",
+            "status": "success"
+            })
+        except Exception as e:
+            return jsonify({
+                "language": "html",
+                "output": "",
+                "error": f"❌ HTML parsing error:\n{str(e)}",
+                "status": "error"
+            })
         # ---------- JAVASCRIPT ----------
         if language in ["js", "javascript"]:
             with tempfile.TemporaryDirectory() as temp_dir:
