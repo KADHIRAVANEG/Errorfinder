@@ -28,6 +28,7 @@ def run_command(command, input_text=None):
     except Exception as e:
         return "", f"⚠ Error: {str(e)}", 1
 
+
 # ------------------------------
 # Root Route
 # ------------------------------
@@ -40,6 +41,7 @@ def home():
         "java": java_path or "Not found",
         "javac": javac_path or "Not found"
     })
+
 
 # ------------------------------
 # Analyzer Route
@@ -191,6 +193,7 @@ def analyze_code():
     except Exception as e:
         print("❌ Exception:", traceback.format_exc())
         return jsonify({"error": str(e)}), 500
+
 
 # ------------------------------
 # Start Flask Server
