@@ -2,240 +2,212 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>🚀 Code Error Finder</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🚀 Code Error Finder - VSCode Style</title>
+
+<!-- Monaco Editor CDN -->
+<script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.41.0/min/vs/loader.js"></script>
+
 <style>
-* { margin:0; padding:0; box-sizing:border-box; font-family:"Poppins",sans-serif; }
-body {
-  background: linear-gradient(135deg,#141e30,#243b55);
-  color:#fff;
-  min-height:100vh;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  padding:40px 20px;
-}
-.container {
-  width:100%;
-  max-width:1600px;
-  background:rgba(255,255,255,0.05);
-  border-radius:25px;
-  padding:60px 50px;
-  box-shadow:0 15px 40px rgba(0,0,0,0.4);
-  display:flex;
-  flex-wrap:wrap;
-  gap:50px;
-  animation:fadeIn 1.2s ease-in-out;
-}
-h1 {
-  width:100%;
-  text-align:center;
-  margin-bottom:60px;
-  font-size:3.5rem;
-  background:linear-gradient(to right,#00c6ff,#0072ff);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-}
-.column {
-  flex:1;
-  min-width:400px;
-  background:rgba(255,255,255,0.05);
-  border-radius:25px;
-  padding:40px 35px;
-  box-shadow:0 8px 30px rgba(0,0,0,0.3);
-  display:flex;
-  flex-direction:column;
-  gap:25px;
-}
-label { font-weight:600; font-size:1.2rem; }
-select, textarea, button {
-  width:100%;
-  padding:20px 18px;
-  border-radius:15px;
-  border:none;
-  font-size:1.2rem;
-  transition:0.3s ease;
-  margin-bottom:25px;
-}
-select, textarea {
-  background:#0f2027;
-  color:#fff;
-  border:2px solid #00c6ff;
-}
-textarea { resize:none; min-height:450px; line-height:1.8; }
-textarea:focus, select:focus {
-  border-color:#ff8c00;
-  box-shadow:0 0 15px #ff8c00;
-}
-button {
-  background:linear-gradient(to right,#00c6ff,#0072ff);
-  color:#fff;
-  font-size:1.3rem;
-  font-weight:bold;
-  cursor:pointer;
-  padding:20px;
-}
-button:hover {
-  background:linear-gradient(to right,#ff8c00,#ff2e63);
-  transform:scale(1.08);
-}
-.loader {
-  display:none;
-  margin:40px auto;
-  border:12px solid rgba(255,255,255,0.1);
-  border-left-color:#00c6ff;
-  border-radius:50%;
-  width:90px; height:90px;
-  animation:spin 1s linear infinite;
-}
-@keyframes spin { to{transform:rotate(360deg);} }
-.output {
-  display:none;
-  background:rgba(255,255,255,0.08);
-  border-radius:25px;
-  padding:35px;
-  max-height:700px;
-  overflow-y:auto;
-  animation:slideUp 0.8s ease-in-out;
-}
-.output h2 { margin-bottom:25px; color:#00c6ff; font-size:1.8rem; }
-.output pre {
-  white-space:pre-wrap;
-  word-wrap:break-word;
-  background:#0f2027;
-  padding:25px;
-  border-radius:15px;
-  color:#fffa;
-  font-size:1.1rem;
-}
-iframe {
-  width: 100%;
-  height: 400px;
-  border: 2px solid #00c6ff;
-  border-radius: 15px;
-  margin-top: 25px;
-  background: #0f2027;
-}
-.action-buttons { display:flex; gap:15px; margin-bottom:20px; }
-.action-buttons button { flex:1; }
-@keyframes fadeIn { from{opacity:0; transform:translateY(-20px);} to{opacity:1; transform:translateY(0);} }
-@keyframes slideUp { from{transform:translateY(50px);opacity:0;} to{transform:translateY(0);opacity:1);} }
-
-/* Footer styling */
-footer {
-  margin-top:40px;
-  text-align:center;
-  font-size:1.1rem;
-  opacity:0.8;
-}
-
-@media(max-width:1000px){ .container{flex-direction:column;} }
+  body, html { margin:0; padding:0; height:100%; font-family:"Fira Code", monospace; overflow:hidden; background:#1e1e2f; color:#f8fafc; }
+  header, footer { text-align:center; font-weight:bold; padding:12px 0; color:#fff; background:#3b82f6; }
+  header { font-size:1.5rem; } footer { font-size:0.9rem; }
+  .container { display:flex; height:calc(100vh - 84px); overflow:hidden; }
+  /* Editor Panel */
+  .editor-panel { flex:2; display:flex; flex-direction:column; min-width:400px; }
+  .editor-top-bar { display:flex; align-items:center; gap:10px; padding:6px; background:#1f2937; }
+  .editor-top-bar select, .editor-top-bar button { padding:6px 12px; font-size:14px; border:none; border-radius:4px; cursor:pointer; }
+  .editor-top-bar select { background:#3b3a55; color:#fff; }
+  .editor-top-bar button { background:#3b82f6; color:#fff; transition:0.2s; }
+  .editor-top-bar button:hover { background:#2563eb; }
+  #lang-logo { width:22px; height:22px; }
+  #editor-container { flex:1; }
+  /* Splitter */
+  #splitter { width:5px; cursor:col-resize; background:#3b3a55; transition:0.2s; }
+  #splitter:hover { background:#60a5fa; }
+  /* Output Panel */
+  .output-panel { flex:1; display:flex; flex-direction:column; min-width:250px; background:#252637; border-left:1px solid #3b3a55; }
+  .output-top-bar { display:flex; align-items:center; gap:10px; padding:6px; background:#1f2937; }
+  .output-top-bar button { padding:6px 12px; font-size:14px; border:none; border-radius:4px; cursor:pointer; background:#3b82f6; color:#fff; transition:0.2s; }
+  .output-top-bar button:hover { background:#2563eb; }
+  #output-title { font-weight:bold; margin-left:10px; margin-bottom:5px; color:#60a5fa; }
+  #output { flex:1; background:#1e1e2f; border-radius:6px; padding:10px; overflow-y:auto; white-space:pre-wrap; font-size:14px; line-height:1.4; margin:0 10px 10px 10px; }
 </style>
 </head>
 <body>
 
+<header>🚀 Code Error Finder</header>
+
 <div class="container">
-  <h1>🚀 Code Error Finder</h1>
-
-  <div class="column">
-    <label for="language">Select Language:</label>
-    <select id="language">
-      <option value="python">🐍 Python</option>
-      <option value="c">🔵 C</option>
-      <option value="cpp">🟣 C++</option>
-      <option value="java">☕ Java</option>
-      <option value="js">🟡 JavaScript</option>
-      <option value="html">🌐 HTML</option>
-    </select>
-
-    <label for="codeInput">Paste Your Code:</label>
-    <textarea id="codeInput" placeholder="Paste your code here..."></textarea>
-
-    <div class="action-buttons">
-      <button onclick="analyzeCode()">Analyze Code</button>
-      <button onclick="clearCode()">Clear Code</button>
+  <!-- Editor Panel -->
+  <div class="editor-panel">
+    <div class="editor-top-bar">
+      <img id="lang-logo" src="" alt="">
+      <select id="language">
+        <option value="python">Python</option>
+        <option value="java">Java</option>
+        <option value="cpp">C++</option>
+        <option value="c">C</option>
+        <option value="js">JavaScript</option>
+        <option value="html">HTML</option>
+      </select>
+      <button id="clearCodeBtn">Clear Code</button>
+      <button id="downloadCodeBtn">Download Code</button>
+      <button id="themeToggle">🌙 Dark/Light</button>
     </div>
+    <div id="editor-container"></div>
   </div>
 
-  <div class="column">
-    <div class="loader" id="loader"></div>
-    <div class="output" id="output">
-      <h2>🔍 Analysis Result</h2>
-      <div class="action-buttons">
-        <button onclick="copyOutput()">📋 Copy Output</button>
-      </div>
-      <pre id="resultText"></pre>
-      <!-- HTML Preview -->
-      <iframe id="htmlPreview" style="display:none;"></iframe>
+  <!-- Splitter -->
+  <div id="splitter"></div>
+
+  <!-- Output Panel -->
+  <div class="output-panel">
+    <div class="output-top-bar">
+      <button id="runBtn">Run Code</button>
+      <button id="clearOutputBtn">Clear Output</button>
+      <button id="downloadOutputBtn">Download Output</button>
     </div>
+    <div id="output-title">Output:</div>
+    <div id="output">📝 Your output will appear here...</div>
   </div>
 </div>
 
 <footer>&copy; 2025 ML-Powered Error Finder</footer>
 
-<script>const BACKEND_URL = 'https://errorfinder.onrender.com/analyze';
+<script>
+const BACKEND_URL = "https://errorfinder.onrender.com/analyze";
 
-function clearCode() {
-  document.getElementById("codeInput").value = "";
-  document.getElementById("output").style.display = "none";
-  document.getElementById("htmlPreview").style.display = "none";
+// Monaco Editor setup
+require.config({ paths: { 'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.41.0/min/vs' }});
+require(['vs/editor/editor.main'], function() {
+  window.editor = monaco.editor.create(document.getElementById('editor-container'), {
+    value: "# Write your code here\n",
+    language: "python",
+    theme: "vs-dark",
+    fontSize:14,
+    automaticLayout:true,
+    minimap:{enabled:false}
+  });
+  updateLanguageLogo("python");
+});
+
+// Language select
+const languageSelect = document.getElementById("language");
+const langLogo = document.getElementById("lang-logo");
+
+function updateLanguageLogo(lang){
+  const logos = {
+    python:"https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg",
+    java:"https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg",
+    cpp:"https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg",
+    c:"https://cdn.jsdelivr.net/gh/devicons/devicon/icons/c/c-original.svg",
+    js:"https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg",
+    html:"https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg"
+  };
+  langLogo.src = logos[lang] || "";
 }
 
-function copyOutput() {
-  const text = document.getElementById("resultText").innerText;
-  navigator.clipboard.writeText(text);
-  alert("✅ Output copied to clipboard!");
+languageSelect.addEventListener("change",()=>{
+  let lang = languageSelect.value;
+  updateLanguageLogo(lang);
+  let monacoLang = lang==="js"?"javascript":lang;
+  monaco.editor.setModelLanguage(editor.getModel(),monacoLang);
+});
+
+// Dark/Light toggle
+const themeToggle = document.getElementById("themeToggle");
+let isDark = true;
+themeToggle.addEventListener("click",()=>{
+  isDark=!isDark;
+  monaco.editor.setTheme(isDark?"vs-dark":"vs-light");
+});
+
+// Buttons
+const runBtn = document.getElementById("runBtn");
+const clearCodeBtn = document.getElementById("clearCodeBtn");
+const clearOutputBtn = document.getElementById("clearOutputBtn");
+const downloadCodeBtn = document.getElementById("downloadCodeBtn");
+const downloadOutputBtn = document.getElementById("downloadOutputBtn");
+const outputDiv = document.getElementById("output");
+
+clearCodeBtn.addEventListener("click",()=>{ editor.setValue(""); });
+clearOutputBtn.addEventListener("click",()=>{ outputDiv.textContent="📝 Your output will appear here..."; });
+downloadCodeBtn.addEventListener("click",()=>{ downloadFile("code.txt",editor.getValue()); });
+downloadOutputBtn.addEventListener("click",()=>{ downloadFile("output.txt",outputDiv.textContent); });
+
+function downloadFile(filename, content){
+  const blob = new Blob([content], {type:"text/plain"});
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = filename;
+  link.click();
 }
 
-async function analyzeCode() {
-  const code = document.getElementById("codeInput").value.trim();
-  const language = document.getElementById("language").value;
-  const loader = document.getElementById("loader");
-  const output = document.getElementById("output");
-  const resultText = document.getElementById("resultText");
-  const htmlPreview = document.getElementById("htmlPreview");
+// Run code
+runBtn.addEventListener("click", async()=>{
+  const code = editor.getValue();
+  const language = languageSelect.value;
+  if(!code.trim()){ outputDiv.textContent="⚠ Please write some code!"; return; }
+  outputDiv.textContent="🔄 Running your code...";
 
-  if (!code) {
-    alert("⚠ Please paste some code!");
-    return;
-  }
-
-  loader.style.display = "block";
-  output.style.display = "none";
-  htmlPreview.style.display = "none";
-
-  try {
-    const response = await fetch(BACKEND_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code, language })
+  try{
+    const res = await fetch(BACKEND_URL,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({code,language})
     });
+    const data = await res.json();
+    let resultText = "";
+    if(data.output) resultText += `🌐 Language: ${language.toUpperCase()}\n\n💻 Output:\n${data.output}\n\n`;
+    if(data.error) resultText += `🔴 Errors:\n${data.error}\n\n`;
+    if(language==="html" && !data.error) resultText += "\n📄 Live Preview Below:\n";
+    if(!data.output && !data.error) resultText="✅ Execution finished (no output).";
+    outputDiv.textContent=resultText;
 
-    const result = await response.json();
-    loader.style.display = "none";
-    output.style.display = "block";
-
-    let displayText = `🌐 Language: ${language.toUpperCase()}\n\n`;
-    if (result.error) displayText += `🔴 Errors:\n${result.error}\n\n`;
-    if (!result.error && !result.output) displayText += "✅ Code is valid.";
-
-    resultText.innerText = displayText;
-
-    // Show HTML preview only if valid and preview exists
-    if(language === "html" && result.status === "success" && result.preview) {
-      htmlPreview.srcdoc = result.preview;
-      htmlPreview.style.display = "block";
-    } else {
-      htmlPreview.style.display = "none";
+    // HTML/JS live preview
+    if(language==="html" || language==="js"){
+      let previewWindow = document.getElementById("htmlPreview");
+      if(!previewWindow){
+        previewWindow=document.createElement("iframe");
+        previewWindow.id="htmlPreview";
+        previewWindow.style.height="200px";
+        previewWindow.style.width="100%";
+        outputDiv.appendChild(previewWindow);
+      }
+      previewWindow.style.display="block";
+      if(language==="html") previewWindow.srcdoc=code;
+      if(language==="js") previewWindow.srcdoc=`<script>${code}<\/script>`;
+      if(language==="html+js") previewWindow.srcdoc=code;
     }
 
-  } catch (err) {
-    loader.style.display = "none";
-    output.style.display = "block";
-    resultText.innerText = `❌ Connection Error:\n${err.message}\n\n💡 Check if your backend is running.`;
+  }catch(err){
+    outputDiv.textContent=`❌ Connection Error:\n${err.message}`;
   }
-}
+});
+
+// Adjustable Splitter
+const splitter = document.getElementById("splitter");
+const editorPanel = document.querySelector(".editor-panel");
+const outputPanel = document.querySelector(".output-panel");
+let isDragging=false;
+
+splitter.addEventListener("mousedown",()=>{ isDragging=true; });
+document.addEventListener("mouseup",()=>{ isDragging=false; });
+document.addEventListener("mousemove",(e)=>{
+  if(!isDragging) return;
+  const containerWidth = editorPanel.parentElement.offsetWidth;
+  const splitterWidth = splitter.offsetWidth;
+  let editorWidth = e.clientX;
+  const minEditor=400, minOutput=250;
+  if(editorWidth<minEditor) editorWidth=minEditor;
+  if(editorWidth>containerWidth-minOutput-splitterWidth) editorWidth=containerWidth-minOutput-splitterWidth;
+  editorPanel.style.flex=`0 0 ${editorWidth}px`;
+  outputPanel.style.flex=`0 0 ${containerWidth-editorWidth-splitterWidth}px`;
+  editor.layout();
+});
+window.addEventListener("resize",()=>{ editor.layout(); });
 
 </script>
-
 </body>
 </html>
