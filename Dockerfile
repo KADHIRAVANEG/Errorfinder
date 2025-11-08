@@ -1,5 +1,5 @@
 # ------------------ Base Image ------------------
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17-jdk-jammy
 
 # ------------------ Install Required Tools ------------------
 RUN apt-get update -y && \
