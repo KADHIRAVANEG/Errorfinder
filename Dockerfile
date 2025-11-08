@@ -1,5 +1,5 @@
 # ------------------ Base Image ------------------
-FROM openjdk:17-slim
+FROM openjdk:17-jdk-slim
 
 # ------------------ Install Required Tools ------------------
 RUN apt-get update -y && \
